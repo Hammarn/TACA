@@ -10,6 +10,7 @@ from taca.illumina.HiSeqX_Runs import HiSeqX_Run
 from taca.illumina.HiSeq_Runs import HiSeq_Run
 from taca.illumina.MiSeq_Runs import MiSeq_Run
 from taca.illumina.NextSeq_Runs import NextSeq_Run
+from taca.illumina.NovaSeq_Runs import NovaSeq_Run
 from taca.utils.config import CONFIG
 
 import flowcell_parser.db as fcpdb
@@ -55,7 +56,15 @@ def get_runObj(run):
             # here makes sense to use get with default value "" ->
             # so that it doesn't raise an exception in the next lines
             # (in case ApplicationName is not found, get returns None)
-            runtype = rp.data['RunParameters']["Setup"].get("ApplicationName", "")
+            try:
+                runtype = rp.data['RunParameters']["Setup"].get("ApplicationName", "")
+            except KeyError:
+                pass 
+            try:
+                 runtype = rp.data['RunParameters']['Application']
+            except KeyError:
+                #be sad and fall over
+                raise KeyError 
 
         if "HiSeq X" in runtype:
             return HiSeqX_Run(run, CONFIG["analysis"]["HiSeqX"])
@@ -65,10 +74,12 @@ def get_runObj(run):
             return MiSeq_Run(run, CONFIG["analysis"]["MiSeq"])
         elif "NextSeq" in runtype:
             return NextSeq_Run(run, CONFIG["analysis"]["NextSeq"])
+        elif "NovaSeq" in runtype:
+            return NovaSeq_Run(run, CONFIG["analysis"]["NovaSeq"])
         else:
             logger.warn("Unrecognized run type {}, cannot archive the run {}. "
                         "Someone as likely bought a new sequencer without telling "
-                        "it to the bioinfo team".format(runtype, run))
+                    "it to the bioinfo team".format(runtype, run))
     # Not necessary as the function will return None at this point but
     # just for being explicit
     return None
