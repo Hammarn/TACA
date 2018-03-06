@@ -274,7 +274,10 @@ class Run(object):
                     if dual_index_sample:
                         i_remainder = cycles - index2_size
                         if i_remainder > 0:
-                            bm.append('I' + str(index2_size) + 'N' + str(i_remainder))
+                            if index2_size == 0:
+                                bm.append('N' + str(cycles)) #possible if same lane has single and dual index samples
+                            else:
+                                bm.append('I' + str(index2_size) + 'N' + str(i_remainder))
                         else:
                             bm.append('I' + str(cycles))
                     else:

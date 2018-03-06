@@ -53,7 +53,7 @@ class HiSeqX_Run(Run):
         if not os.path.exists(samplesheet_dest):
             try:
                 with open(samplesheet_dest, 'wb') as fcd:
-                    fcd.write(_generate_clean_samplesheet(ssparser,indexfile, fields_to_remove=['index2'], rename_samples=True, rename_qPCR_suffix = True, fields_qPCR=[ssparser.dfield_snm]))
+                    fcd.write(_generate_clean_samplesheet(ssparser,indexfile, rename_samples=True, rename_qPCR_suffix = True, fields_qPCR=[ssparser.dfield_snm]))
             except Exception as e:
                 logger.error("encountered the following exception '{}'".format(e))
                 return False
